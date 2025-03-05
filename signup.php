@@ -1,51 +1,48 @@
 <?php
 session_start();
-include './includes/db.php'; // Ensure correct database connection
+$host = "localhost"; // Change if needed
+$user = "root"; // Change if needed
+$password = ""; // Change if using a different password
+$database = "leafycart";
+
+$conn = new mysqli($host, $user, $password, $database);
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['name']);
-    $email = trim($_POST['email']);
-    $password = trim($_POST['password']);
+    $name = trim($_POST["name"]);
+    $email = trim($_POST["email"]);
+    $password = trim($_POST["password"]);
+    
+    // Check if the email is already registered
+    $checkQuery = "SELECT * FROM users WHERE email = ?";
+    $stmt = $conn->prepare($checkQuery);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        // User already exists
+        echo "<script>alert('User already exists! Redirecting to login.'); window.location.href='login.php';</script>";
+    } else {
+        // Hash the password for security
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    // ✅ Check if fields are empty
-    if (empty($name) || empty($email) || empty($password)) {
-        echo "<script>alert('All fields are required!'); window.location.href='signup.php';</script>";
-        exit();
-    }
-
-    // ✅ Validate email format
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo "<script>alert('Invalid email format!'); window.location.href='signup.php';</script>";
-        exit();
-    }
-
-    // ✅ Check if user already exists
-    try {
-        $check_user = $conn->prepare("SELECT id FROM users WHERE email = :email");
-        $check_user->bindParam(":email", $email, PDO::PARAM_STR);
-        $check_user->execute();
-
-        if ($check_user->rowCount() > 0) {
-            echo "<script>alert('User already exists! Please log in.'); window.location.href='login.php';</script>";
-            exit();
-        }
-
-        // ✅ Hash the password for security
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        // ✅ Insert new user into database
-        $stmt = $conn->prepare("INSERT INTO users (name, email, password) VALUES (:name, :email, :password)");
-        $stmt->bindParam(":name", $name, PDO::PARAM_STR);
-        $stmt->bindParam(":email", $email, PDO::PARAM_STR);
-        $stmt->bindParam(":password", $hashed_password, PDO::PARAM_STR);
+        // Insert new user
+        $insertQuery = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($insertQuery);
+        $stmt->bind_param("sss", $name, $email, $hashedPassword);
 
         if ($stmt->execute()) {
-            echo "<script>alert('Signup successful! Please log in.'); window.location.href='login.html';</script>";
+            echo "<script>alert('Signup successful! Redirecting to login page.'); window.location.href='login.php';</script>";
         } else {
-            echo "<script>alert('Signup failed! Please try again.'); window.location.href='signup.html';</script>";
+            echo "<script>alert('Error signing up. Please try again.'); window.history.back();</script>";
         }
-    } catch (PDOException $e) {
-        die("Error: " . $e->getMessage()); // Debugging (remove in production)
     }
+    $stmt->close();
 }
+$conn->close();
 ?>

@@ -90,21 +90,50 @@
         <img src="img/core-img/logo.png" alt="LeafyCart Logo" class="logo">
         <div class="signup-box">
             <h2>Sign Up</h2>
-            <form action="signup.php" method="POST">
-                <input type="text" name="name" placeholder="Full Name" required>
-                <input type="email" name="email" placeholder="Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Sign Up</button> </form><br>
-                <div class="links-container">
-                    <a href="index.html">Home<br></a></div>
-                <p>Already have an account? <a href="login.html">Login here</a></p>
-    </div><script src="script.js"></script>
+            <form id="signup-form">
+                <input type="text" id="name" placeholder="Full Name" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form><br>
+            <div class="links-container">
+                <a href="index.html">Home<br></a>
+            </div>
+            <p>Already have an account? <a href="login.html">Login here</a></p>
         </div>
     </div>
     
     <script>
         gsap.from(".welcome-text", { opacity: 0, y: -50, duration: 1.5, ease: "power2.out" });
         gsap.from(".signup-container", { opacity: 0, scale: 0.8, duration: 1, delay: 1 });
+
+        document.getElementById("signup-form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let name = document.getElementById("name").value.trim();
+            let email = document.getElementById("email").value.trim();
+            let password = document.getElementById("password").value.trim();
+
+            if (name === "" || email === "" || password === "") {
+                alert("All fields are required!");
+                return;
+            }
+
+            let users = JSON.parse(localStorage.getItem("users")) || [];
+
+            // Check if the email is already registered
+            let existingUser = users.find(user => user.email === email);
+
+            if (existingUser) {
+                alert("User already exists! Redirecting to login page.");
+                window.location.href = "login.html";
+            } else {
+                users.push({ name: name, email: email, password: password });
+                localStorage.setItem("users", JSON.stringify(users));
+                alert("Signup successful! Redirecting to login page.");
+                window.location.href = "login.html";
+            }
+        });
     </script>
 </body>
 </html>

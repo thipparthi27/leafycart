@@ -135,7 +135,6 @@
                                             <li><a href="shop.html">Shop</a>
                                                 <ul class="dropdown">
                                                     <li><a href="shop.html">Shop</a></li>
-                                                    <li><a href="shop-details.html">Shop Details</a></li>
                                                     <li><a href="cart.html">Shopping Cart</a></li>
                                                 </ul>
                                             </li>
@@ -507,10 +506,33 @@
                 </div>
                 <div class="col-12 col-lg-6">
                     <div class="subscribe-form">
-                        <form action="subscribe.php" method="post">
+                        <form id="subscribeForm">
                             <input type="email" name="subscribe_email" id="subscribeEmail" placeholder="Enter your email" required>
                             <button type="submit" class="btn alazea-btn">SUBSCRIBE</button>
                         </form>
+                        
+                        <script>
+                        document.getElementById("subscribeForm").addEventListener("submit", function(event) {
+                            event.preventDefault(); // Prevent form submission
+                        
+                            let email = document.getElementById("subscribeEmail").value;
+                        
+                            if (email) {
+                                let subscriptions = JSON.parse(localStorage.getItem("subscriptions")) || []; // Get stored emails
+                                if (!subscriptions.includes(email)) {
+                                    subscriptions.push(email); // Add new email
+                                    localStorage.setItem("subscriptions", JSON.stringify(subscriptions)); // Store in localStorage
+                                    alert("✅ Subscription Successful!");
+                                    document.getElementById("subscribeForm").reset(); // Clear input
+                                } else {
+                                    alert("⚠️ You are already subscribed!");
+                                }
+                            } else {
+                                alert("❌ Please enter a valid email!");
+                            }
+                        });
+                        </script>
+                        
                     </div>
                 </div>
             </div>

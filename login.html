@@ -48,9 +48,9 @@
         }
         .logo {
             width: 100px;
-            height:100px;
-            margin-bottom:-10px;
-            border-radius:50%;
+            height: 100px;
+            margin-bottom: -10px;
+            border-radius: 50%;
         }
         .login-box h2 {
             margin-bottom: 15px;
@@ -63,7 +63,6 @@
             border-radius: 5%;
         }
         .login-box button {
-            
             width: 100%;
             padding: 10px;
             background: #4ca2cd;
@@ -73,8 +72,22 @@
             border-radius: 5%;
             cursor: pointer;
         }
-        .signup-box button:hover {
+        .login-box button:hover {
             background: #3b92b0;
+        }
+        .links-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .links-container a {
+            text-decoration: none;
+            color: #007bff;
+        }
+        .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -91,30 +104,52 @@
         <img src="img/core-img/logo.png" alt="LeafyCart Logo" class="logo">
         <div class="login-box">
             <h2>Login</h2>
-            <form action="login.php" method="POST">
-                <input type="email" name="email" placeholder="Enter Email" required>
-                <input type="password" name="password" placeholder="Password" required>
-                <button type="submit">Login</button><br><br>
+            <form id="loginForm">
+                <input type="email" id="email" placeholder="Enter Email" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <button type="submit">Login</button><br>
+                <p class="error-message" id="errorMessage"></p>
             </form>
-            <style>
-                .links-container {
-                  display: flex;
-                  justify-content: space-between; /* or justify-content: space-around */
-                }
-              </style>
-              
-             <div class="links-container">
-            <a href="index.html">Home<br>
-                <a href="/forgot-password">Forgot Password?</a></div>
-            <p>Don't have an account? <a href="signup.html">signup here</a></p>
-    </div><script src="script.js"></script>
-        </div>
+            <div class="links-container">
+                <a href="index.html">Home</a>
+                <a href="/forgot-password">Forgot Password?</a>
+            </div>
+            <p>Don't have an account? <a href="signup.html">Signup here</a></p>
         </div>
     </div>
-    
+
     <script>
         gsap.from(".welcome-text", { opacity: 0, y: -50, duration: 1.5, ease: "power2.out" });
         gsap.from(".login-container", { opacity: 0, scale: 0.8, duration: 1, delay: 1 });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginForm = document.getElementById("loginForm");
+            const errorMessage = document.getElementById("errorMessage");
+
+            loginForm.addEventListener("submit", function (event) {
+                event.preventDefault(); // Prevent form submission
+                
+                const email = document.getElementById("email").value.trim();
+                const password = document.getElementById("password").value.trim();
+
+                // Retrieve stored user data from localStorage
+                const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+
+                // Find user by email
+                const foundUser = storedUsers.find(user => user.email === email);
+
+                if (foundUser) {
+                    if (foundUser.password === password) {
+                        alert("Login Successful!");
+                        window.location.href = "index.html"; // Redirect to home page
+                    } else {
+                        errorMessage.textContent = "Incorrect password. Please try again.";
+                    }
+                } else {
+                    errorMessage.textContent = "Account doesn't exist. Please sign up.";
+                }
+            });
+        });
     </script>
 </body>
 </html>

@@ -1,38 +1,40 @@
 <?php
-// Database connection
-$host = "localhost";
-$user = "root"; // Default XAMPP username
-$password = ""; // Default XAMPP password (empty)
-$dbname = "leafycart"; // Change to your database name
+session_start();
+$servername = "localhost";  // Change if needed
+$username = "root";  // Change if using another user
+$password = "";  // Change if your MySQL has a password
+$database = "leafycart";  // Change to your database name
 
-$conn = new mysqli($host, $user, $password, $dbname);
+// Create connection
+$conn = new mysqli($servername, $username, $password, $database);
 
 // Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $name = trim($_POST['contact_name']);
-    $email = trim($_POST['contact_email']);
-    $subject = trim($_POST['contact_subject']);
-    $message = trim($_POST['contact_message']);
+    $name = htmlspecialchars($_POST['name']);
+    $email = htmlspecialchars($_POST['email']);
+    $subject = htmlspecialchars($_POST['subject']);
+    $message = htmlspecialchars($_POST['message']);
 
-
-
-    // Prepare SQL statement to insert data
-    $stmt = $conn->prepare("INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)");
+    // Insert into database (optional)
+    $sql = "INSERT INTO contact_messages (name, email, subject, message) VALUES (?, ?, ?, ?)";
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("ssss", $name, $email, $subject, $message);
 
     if ($stmt->execute()) {
-        echo "<script>alert('Message sent successfully!'); window.location.href='index.html';</script>";
+        $_SESSION['success_message'] = "Message sent successfully!";
     } else {
-        echo "<script>alert('Failed to send message! Try again.'); window.location.href='index.html';</script>";
-    }    
+        $_SESSION['error_message'] = "Error: " . $conn->error;
+    }
 
     $stmt->close();
-}
+    $conn->close();
 
-$conn->close();
+    // Redirect back to the contact page
+    header("Location: contact.php");
+    exit();
+}
 ?>
