@@ -60,6 +60,15 @@ ol {
   ol li {
     list-style: none; }
 
+.auth-logged-out #nav-profile,
+.auth-logged-out #nav-logout,
+.auth-logged-in #nav-login {
+  display: none !important; }
+
+.auth-logged-in #nav-profile,
+.auth-logged-in #nav-logout {
+  display: list-item !important; }
+
 img {
   height: auto;
   max-width: 100%; }
@@ -440,6 +449,7 @@ img {
         color: #70c745; }
       .header-area .alazea-main-menu .classynav ul li a::after {
         color: #ffffff; }
+
     .header-area .alazea-main-menu .classynav ul li ul li a {
       padding: 0 20px;
       color: #303030;
@@ -473,6 +483,23 @@ img {
     @media only screen and (max-width: 767px) {
       .header-area .alazea-main-menu .classycloseIcon .cross-wrap span {
         background: #ffffff; } }
+    @media only screen and (min-width: 992px) {
+      .header-area .alazea-main-menu .classynav > ul {
+        display: flex !important;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0;
+      }
+      .header-area .alazea-main-menu .classynav > ul > li {
+        display: inline-flex !important;
+        margin: 0;
+      }
+    }
+    #nav-user-text {
+      color: #ffffff !important;
+      font-weight: 600;
+      font-size: 16px;
+    }
     .header-area .alazea-main-menu .search-form {
       position: relative;
       z-index: 1;

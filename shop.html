@@ -17,6 +17,7 @@
 
     <!-- Core Stylesheet -->
     <link rel="stylesheet" href="style.css">
+    <script src="js/auth-state.js"></script>
 
 </head>
 
@@ -46,6 +47,10 @@
 
                             <!-- Top Header Content -->
                             <div class="top-header-meta d-flex">
+                                <!-- User Greeting -->
+                                <div id="user-greeting" style="display:none; margin-right: 30px; font-weight: 600; color: #70c745; font-size: 16px;">
+                                    <span id="greeting-text"></span>
+                                </div>
                                 <!-- Language Dropdown -->
                                 <div class="language-dropdown">
                                     <div class="dropdown">
@@ -102,7 +107,9 @@
                                 <ul>
                                     <li><a href="index.html">Home</a></li>
                                     <li><a href="about.html">About</a></li>
-                                    <li><a href="login.html">Login</a></li>
+                                    <li id="nav-login"><a href="login.html">Login</a></li>
+                                    <li id="nav-profile" style="display:none;"><a href="#" id="profileBtn">Profile</a></li>
+                                    <li id="nav-logout" style="display:none;"><a href="#" id="logoutBtn">Logout</a></li>
                                             <li><a href="shop.html">Shop</a>
                                                 <ul class="dropdown">
                                                     <li><a href="shop.html">Shop</a></li>
@@ -210,6 +217,9 @@
                 }
     
                 function addToCart(productId) {
+                    if (!requireLogin("You must login before adding items to cart.")) {
+                        return;
+                    }
                     let cart = JSON.parse(localStorage.getItem('cart')) || [];
                     const product = products.find(p => p.id === productId);
                     if (product) {
@@ -374,6 +384,41 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     </footer>
     <!-- ##### Footer Area End ##### -->
 
+    <!-- Profile Modal -->
+    <div id="profileModal" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.6);">
+        <div style="background:#fff; margin:5% auto; padding:30px; border-radius:10px; width:90%; max-width:600px; max-height:80vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #70c745; padding-bottom:15px;">
+                <h2 style="margin:0; color:#333;">My Profile</h2>
+                <button id="closeModal" style="background:none; border:none; font-size:24px; cursor:pointer; color:#999;">&times;</button>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px;">👤 Name</label>
+                <p id="modal-user-name" style="margin:0; padding:10px; background:#f5f5f5; border-radius:5px; border-left:4px solid #70c745;"></p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px;">📧 Email</label>
+                <p id="modal-user-email" style="margin:0; padding:10px; background:#f5f5f5; border-radius:5px; border-left:4px solid #70c745;"></p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px;">📍 Address</label>
+                <p id="modal-user-address" style="margin:0; padding:10px; background:#f5f5f5; border-radius:5px; border-left:4px solid #70c745;"></p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px;">✅ Account Status</label>
+                <p id="modal-user-status" style="margin:0; padding:10px; background:#f5f5f5; border-radius:5px; border-left:4px solid #70c745;">Active Member</p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px;">🛒 Order History</label>
+                <p id="modal-order-history" style="margin:0; padding:10px; background:#f5f5f5; border-radius:5px; border-left:4px solid #70c745; min-height:40px;">No orders yet</p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-weight:600; color:#333; margin-bottom:5px;">📦 Tracking</label>
+                <p id="modal-tracking" style="margin:0; padding:10px; background:#f5f5f5; border-radius:5px; border-left:4px solid #70c745; min-height:40px;">No active shipments</p>
+            </div>
+            <button id="closeModalBtn" style="width:100%; padding:12px; background:#70c745; color:white; border:none; border-radius:5px; font-size:16px; font-weight:600; cursor:pointer; margin-top:20px;">Close</button>
+        </div>
+    </div>
+
     <!-- ##### All Javascript Files ##### -->
     <!-- jQuery-2.2.4 js -->
     <script src="js/jquery/jquery-2.2.4.min.js"></script>
@@ -385,7 +430,7 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
     <script src="js/plugins/plugins.js"></script>
     <!-- Active js -->
     <script src="js/active.js"></script>
-    
+    <script src="js/auth.js"></script>
 </body>
 
 </html>
